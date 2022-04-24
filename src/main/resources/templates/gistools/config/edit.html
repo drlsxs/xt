@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改配置')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-config-edit" th:object="${gtConfig}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">配置名称：</label>
+                <div class="col-sm-8">
+                    <input name="name" th:field="*{name}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">排序：</label>
+                <div class="col-sm-8">
+                    <input name="sort" th:field="*{sort}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">地图中间件url：</label>
+                <div class="col-sm-8">
+                    <input name="msUrl" th:field="*{msUrl}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">地图中间件用户名：</label>
+                <div class="col-sm-8">
+                    <input name="msUname" th:field="*{msUname}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">地图中间件密码：</label>
+                <div class="col-sm-8">
+                    <input name="msPwd" th:field="*{msPwd}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">栅格资产目录：</label>
+                <div class="col-sm-8">
+                    <input name="gridPath" th:field="*{gridPath}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">三维资产目录：</label>
+                <div class="col-sm-8">
+                    <input name="threePath" th:field="*{threePath}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">栅格服务url头：</label>
+                <div class="col-sm-8">
+                    <input name="defUrl" th:field="*{defUrl}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">工作空间：</label>
+                <div class="col-sm-8">
+                    <input name="item1" th:field="*{item1}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">三维服务头：</label>
+                <div class="col-sm-8">
+                    <input name="item2" th:field="*{item2}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">备用3：</label>
+                <div class="col-sm-8">
+                    <input name="item3" th:field="*{item3}" class="form-control" type="text">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "gistools/config";
+        $("#form-config-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-config-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

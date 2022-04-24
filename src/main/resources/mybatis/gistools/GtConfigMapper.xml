@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.numberone.project.gistools.config.mapper.GtConfigMapper">
+    
+    <resultMap type="GtConfig" id="GtConfigResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="sort"    column="sort"    />
+        <result property="msUrl"    column="ms_url"    />
+        <result property="msUname"    column="ms_uname"    />
+        <result property="msPwd"    column="ms_pwd"    />
+        <result property="gridPath"    column="grid_path"    />
+        <result property="threePath"    column="three_path"    />
+        <result property="defUrl"    column="def_url"    />
+        <result property="item1"    column="item1"    />
+        <result property="item2"    column="item2"    />
+        <result property="item3"    column="item3"    />
+    </resultMap>
+
+    <sql id="selectGtConfigVo">
+        select id, name, sort, ms_url, ms_uname, ms_pwd, grid_path, three_path, def_url, item1, item2, item3 from gt_config
+    </sql>
+
+    <select id="selectGtConfigList" parameterType="GtConfig" resultMap="GtConfigResult">
+        <include refid="selectGtConfigVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectGtConfigById" parameterType="String" resultMap="GtConfigResult">
+        <include refid="selectGtConfigVo"/>
+        where id = #{id}
+    </select>
+    
+    <select id="selectGtConfigNow" resultMap="GtConfigResult">
+        <include refid="selectGtConfigVo"/>
+        order by sort
+		limit 1
+    </select>
+        
+    <insert id="insertGtConfig" parameterType="GtConfig">
+        insert into gt_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="sort != null  and sort != ''">sort,</if>
+            <if test="msUrl != null  and msUrl != ''">ms_url,</if>
+            <if test="msUname != null  and msUname != ''">ms_uname,</if>
+            <if test="msPwd != null  and msPwd != ''">ms_pwd,</if>
+            <if test="gridPath != null  and gridPath != ''">grid_path,</if>
+            <if test="threePath != null  and threePath != ''">three_path,</if>
+            <if test="defUrl != null  and defUrl != ''">def_url,</if>
+            <if test="item1 != null  and item1 != ''">item1,</if>
+            <if test="item2 != null  and item2 != ''">item2,</if>
+            <if test="item3 != null  and item3 != ''">item3,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="sort != null  and sort != ''">#{sort},</if>
+            <if test="msUrl != null  and msUrl != ''">#{msUrl},</if>
+            <if test="msUname != null  and msUname != ''">#{msUname},</if>
+            <if test="msPwd != null  and msPwd != ''">#{msPwd},</if>
+            <if test="gridPath != null  and gridPath != ''">#{gridPath},</if>
+            <if test="threePath != null  and threePath != ''">#{threePath},</if>
+            <if test="defUrl != null  and defUrl != ''">#{defUrl},</if>
+            <if test="item1 != null  and item1 != ''">#{item1},</if>
+            <if test="item2 != null  and item2 != ''">#{item2},</if>
+            <if test="item3 != null  and item3 != ''">#{item3},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGtConfig" parameterType="GtConfig">
+        update gt_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="sort != null  and sort != ''">sort = #{sort},</if>
+            <if test="msUrl != null  and msUrl != ''">ms_url = #{msUrl},</if>
+            <if test="msUname != null  and msUname != ''">ms_uname = #{msUname},</if>
+            <if test="msPwd != null  and msPwd != ''">ms_pwd = #{msPwd},</if>
+            <if test="gridPath != null  and gridPath != ''">grid_path = #{gridPath},</if>
+            <if test="threePath != null  and threePath != ''">three_path = #{threePath},</if>
+            <if test="defUrl != null  and defUrl != ''">def_url = #{defUrl},</if>
+            <if test="item1 != null  and item1 != ''">item1 = #{item1},</if>
+            <if test="item2 != null  and item2 != ''">item2 = #{item2},</if>
+            <if test="item3 != null  and item3 != ''">item3 = #{item3},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGtConfigById" parameterType="String">
+        delete from gt_config where id = #{id}
+    </delete>
+
+    <delete id="deleteGtConfigByIds" parameterType="String">
+        delete from gt_config where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

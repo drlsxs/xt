@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.numberone.project.gistools.interactive.mapper.GtDictTypeMapper">
+
+    <resultMap type="GtDictType" id="GtDictTypeResult">
+        <result property="id"    column="id"    />
+        <result property="dictName"    column="dict_name"    />
+        <result property="tableName"    column="table_name"    />
+        <result property="fieldName"    column="field_name"    />
+        <result property="resourceId"    column="resource_id"    />
+    </resultMap>
+
+    <sql id="selectGtDictTypeVo">
+        select id, dict_name, table_name, field_name,resource_id from gt_dict_type
+    </sql>
+
+    <select id="selectGtDictTypeList" parameterType="GtDictType" resultMap="GtDictTypeResult">
+        <include refid="selectGtDictTypeVo"/>
+        <where>
+            <if test="dictName != null  and dictName != ''"> and dict_name like concat('%', #{dictName}, '%')</if>
+            <if test="tableName != null  and tableName != ''"> and table_name like concat('%', #{tableName}, '%')</if>
+            <if test="fieldName != null  and fieldName != ''"> and field_name like concat('%', #{fieldName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectGtDictTypeById" parameterType="String" resultMap="GtDictTypeResult">
+        <include refid="selectGtDictTypeVo"/>
+        where id = #{id}
+    </select>
+    <select id="getListByResourceId" resultType="com.numberone.project.gistools.interactive.domain.GtDictType">
+        <include refid="selectGtDictTypeVo"/>
+        where resource_id = #{resourceId}
+    </select>
+
+    <insert id="insertGtDictType" parameterType="GtDictType">
+        insert into gt_dict_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="dictName != null  and dictName != ''">dict_name,</if>
+            <if test="tableName != null  and tableName != ''">table_name,</if>
+            <if test="fieldName != null  and fieldName != ''">field_name,</if>
+            <if test="resourceId != null  and resourceId != ''">resource_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="dictName != null  and dictName != ''">#{dictName},</if>
+            <if test="tableName != null  and tableName != ''">#{tableName},</if>
+            <if test="fieldName != null  and fieldName != ''">#{fieldName},</if>
+            <if test="resourceId != null  and resourceId != ''">#{resourceId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateGtDictType" parameterType="GtDictType">
+        update gt_dict_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="dictName != null  and dictName != ''">dict_name = #{dictName},</if>
+            <if test="tableName != null  and tableName != ''">table_name = #{tableName},</if>
+            <if test="fieldName != null  and fieldName != ''">field_name = #{fieldName},</if>
+            <if test="resourceId != null  and resourceId != ''">resource_id = #{resourceId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGtDictTypeById" parameterType="String">
+        delete from gt_dict_type where id = #{id}
+    </delete>
+
+    <delete id="deleteGtDictTypeByIds" parameterType="String">
+        delete from gt_dict_type where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.numberone.project.gistools.interactive.mapper.GtMasterSlaveMapper">
+
+    <resultMap type="GtMasterSlave" id="GtMasterSlaveResult">
+        <result property="id"    column="id"    />
+        <result property="masterName"    column="master_name"    />
+        <result property="masterField"    column="master_field"    />
+        <result property="slaveName"    column="slave_name"    />
+        <result property="slaveField"    column="slave_field"    />
+        <result property="masterType"    column="master_type"    />
+        <result property="slaveType"    column="slave_type"    />
+    </resultMap>
+
+    <sql id="selectGtMasterSlaveVo">
+        select id, master_name, master_field, slave_name, slave_field,master_type,slave_type from gt_master_slave
+    </sql>
+
+    <select id="selectGtMasterSlaveList" parameterType="GtMasterSlave" resultMap="GtMasterSlaveResult">
+        <include refid="selectGtMasterSlaveVo"/>
+        <where>
+            <if test="masterName != null "> and master_name like concat('%', #{masterName}, '%')</if>
+            <if test="masterField != null "> and master_field = #{masterField}</if>
+            <if test="slaveName != null "> and slave_name like concat('%', #{slaveName}, '%')</if>
+            <if test="slaveField != null "> and slave_field = #{slaveField}</if>
+        </where>
+    </select>
+
+    <select id="selectGtMasterSlaveById" parameterType="String" resultMap="GtMasterSlaveResult">
+        <include refid="selectGtMasterSlaveVo"/>
+        where id = #{id}
+    </select>
+    <select id="getFieldByTableName" resultType="java.lang.String">
+        SELECT column_name FROM information_schema.columns As c WHERE table_name = '${tableName}'
+    </select>
+    <select id="getSlaveByTableName" resultType="java.lang.String">
+        select slave_name from gt_master_slave where master_name=#{tableName}
+    </select>
+
+    <insert id="insertGtMasterSlave" parameterType="GtMasterSlave">
+        insert into gt_master_slave
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="masterName != null ">master_name,</if>
+            <if test="masterField != null ">master_field,</if>
+            <if test="slaveName != null ">slave_name,</if>
+            <if test="slaveField != null ">slave_field,</if>
+            <if test="slaveType != null ">slave_type,</if>
+            <if test="masterType != null ">master_type,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="masterName != null ">#{masterName},</if>
+            <if test="masterField != null ">#{masterField},</if>
+            <if test="slaveName != null ">#{slaveName},</if>
+            <if test="slaveField != null ">#{slaveField},</if>
+            <if test="slaveType != null ">#{slaveType},</if>
+            <if test="masterType != null ">#{masterType},</if>
+        </trim>
+    </insert>
+
+    <update id="updateGtMasterSlave" parameterType="GtMasterSlave">
+        update gt_master_slave
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="masterName != null ">master_name = #{masterName},</if>
+            <if test="masterField != null ">master_field = #{masterField},</if>
+            <if test="slaveName != null ">slave_name = #{slaveName},</if>
+            <if test="slaveField != null ">slave_field = #{slaveField},</if>
+            <if test="masterType != null ">master_type = #{masterType},</if>
+            <if test="slaveType != null ">slave_type = #{slaveType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGtMasterSlaveById" parameterType="String">
+        delete from gt_master_slave where id = #{id}
+    </delete>
+
+    <delete id="deleteGtMasterSlaveByIds" parameterType="String">
+        delete from gt_master_slave where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

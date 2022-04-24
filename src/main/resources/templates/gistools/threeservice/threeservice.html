@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('三维数据服务列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>服务名称：</p>
+                                <input type="text" name="name"/>
+                            </li>
+                            <li>
+                                <p>文件路径：</p>
+                                <input type="text" name="filePath"/>
+                            </li>
+                            <li>
+                                <p>服务url：</p>
+                                <input type="text" name="surl"/>
+                            </li>
+                            <li>
+                                <p>状态：</p>
+                                <select name="statu" th:with="type=${@dict.getType('gt_grid_service')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="gistools:threeservice:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="gistools:threeservice:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="gistools:threeservice:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="gistools:threeservice:export">
+                    <i class="fa fa-download"></i> 导出
+                 </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('gistools:threeservice:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('gistools:threeservice:remove')}]];
+        var statuDatas = [[${@dict.getType('gt_grid_service')}]];
+        var prefix = ctx + "gistools/threeservice";
+        function publish(id){
+			$.modal.confirm("确定发布服务吗？", function() {
+				var url = prefix + "/publish";
+				/*if($.table._option.type == table_type.bootstrapTreeTable) {
+					$.operate.get(url);
+				} else {
+					var data = { "ids": id };
+					$.operate.submit(url, "post", "json", data);
+				}*/
+				var data = { "id": id };
+				$.operate.submit(url, "post", "json", data);
+			});
+		}
+        
+        function unpublish(id){
+			$.modal.confirm("确定停止服务吗？", function() {
+				var url = prefix + "/unpublish";
+				/*if($.table._option.type == table_type.bootstrapTreeTable) {
+					$.operate.get(url);
+				} else {
+					var data = { "ids": id };
+					$.operate.submit(url, "post", "json", data);
+				}*/
+				var data = { "id": id };
+				$.operate.submit(url, "post", "json", data);
+			});
+		}
+        
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "三维数据服务",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'id', 
+                    title : 'null',
+                    visible: false
+                },
+                {
+                    field : 'name', 
+                    title : '服务名称'
+                },
+                {
+                    field : 'sdesc', 
+                    title : '服务描述'
+                },
+                {
+                    field : 'filePath', 
+                    title : '文件路径'
+                },
+                {
+                    field : 'folderPath', 
+                    title : '文件夹路径'
+                },
+                {
+                    field : 'srid', 
+                    title : '空间参考'
+                },
+                {
+                    field : 'statu', 
+                    title : '状态',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(statuDatas, value);
+                    }
+                },
+                {
+                    field : 'note', 
+                    title : '备注'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        if(row.statu=='00'){
+                        	actions.push('<a class="btn btn-info btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="publish(\'' + row.id + '\')"><i class="fa fa-play"></i>发布服务</a> ');
+                        }else{
+                        	actions.push('<a class="btn btn-warning btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="unpublish(\'' + row.id + '\')"><i class="fa fa-stop"></i>停止服务</a> ');
+                        }
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

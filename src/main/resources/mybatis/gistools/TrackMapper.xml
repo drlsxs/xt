@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.numberone.project.gistools.track.mapper.TrackMapper">
+
+    <resultMap type="Track" id="TrackResult">
+        <result property="id"    column="id"    />
+        <result property="carNo"    column="car_no"    />
+        <result property="gpstime"    column="gpstime"    />
+        <result property="lon"    column="lon"    />
+        <result property="lat"    column="lat"    />
+        <result property="imei"    column="imei"    />
+        <result property="speed"    column="speed"    />
+        <result property="bearing"    column="bearing"    />
+    </resultMap>
+
+    <sql id="selectTrackVo">
+        select id, car_no, gpstime, lon, lat, imei, speed, bearing from gt_track
+    </sql>
+
+    <select id="selectCarNo" parameterType="Track" resultMap="TrackResult">
+        SELECT DISTINCT car_no FROM gt_track <where>
+    <if test="carNo != null and carNo!= '' "> car_no like concat('%', #{carNo}, '%')</if></where> ORDER BY car_no
+    </select>
+
+
+    <select id="selectTrackList" parameterType="Track" resultMap="TrackResult">
+        <include refid="selectTrackVo"/>
+        <where>
+            <if test="carNo != null "> and car_no = #{carNo}</if>
+            <if test="gpstime != null "> and gpstime = #{gpstime}</if>
+            <if test="lon != null "> and lon = #{lon}</if>
+            <if test="lat != null "> and lat = #{lat}</if>
+            <if test="imei != null "> and imei = #{imei}</if>
+            <if test="speed != null "> and speed = #{speed}</if>
+            <if test="bearing != null "> and bearing = #{bearing}</if>
+        </where>
+    </select>
+
+    <select id="selectTrackById" parameterType="String" resultMap="TrackResult">
+        <include refid="selectTrackVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTrack" parameterType="Track">
+        insert into gt_track
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="carNo != null ">car_no,</if>
+            <if test="gpstime != null ">gpstime,</if>
+            <if test="lon != null ">lon,</if>
+            <if test="lat != null ">lat,</if>
+            <if test="imei != null ">imei,</if>
+            <if test="speed != null ">speed,</if>
+            <if test="bearing != null ">bearing,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="carNo != null ">#{carNo},</if>
+            <if test="gpstime != null ">#{gpstime},</if>
+            <if test="lon != null ">#{lon},</if>
+            <if test="lat != null ">#{lat},</if>
+            <if test="imei != null ">#{imei},</if>
+            <if test="speed != null ">#{speed},</if>
+            <if test="bearing != null ">#{bearing},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTrack" parameterType="Track">
+        update gt_track
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="carNo != null ">car_no = #{carNo},</if>
+            <if test="gpstime != null ">gpstime = #{gpstime},</if>
+            <if test="lon != null ">lon = #{lon},</if>
+            <if test="lat != null ">lat = #{lat},</if>
+            <if test="imei != null ">imei = #{imei},</if>
+            <if test="speed != null ">speed = #{speed},</if>
+            <if test="bearing != null ">bearing = #{bearing},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTrackById" parameterType="String">
+        delete from gt_track where id = #{id}
+    </delete>
+
+    <delete id="deleteTrackByIds" parameterType="String">
+        delete from gt_track where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

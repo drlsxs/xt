@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.numberone.project.gistools.interactive.mapper.GtInteractiveMapper">
+
+    <resultMap type="GtInteractive" id="GtInteractiveResult">
+        <result property="id"    column="id"    />
+        <result property="show"    column="show"    />
+        <result property="field"    column="field"    />
+        <result property="association"    column="association"    />
+    </resultMap>
+
+    <sql id="selectGtInteractiveVo">
+        select id, show, field, association from gt_interactive
+    </sql>
+
+    <select id="selectGtInteractiveList" parameterType="GtInteractive" resultMap="GtInteractiveResult">
+        <include refid="selectGtInteractiveVo"/>
+        <where>
+            <if test="show != null  and show != ''"> and show = #{show}</if>
+            <if test="field != null  and field != ''"> and field = #{field}</if>
+            <if test="association != null  and association != ''"> and association = #{association}</if>
+        </where>
+    </select>
+
+    <select id="selectGtInteractiveById" parameterType="String" resultMap="GtInteractiveResult">
+        <include refid="selectGtInteractiveVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertGtInteractive" parameterType="GtInteractive">
+        insert into gt_interactive
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="show != null  and show != ''">show,</if>
+            <if test="field != null  and field != ''">field,</if>
+            <if test="association != null  and association != ''">association,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="show != null  and show != ''">#{show},</if>
+            <if test="field != null  and field != ''">#{field},</if>
+            <if test="association != null  and association != ''">#{association},</if>
+        </trim>
+    </insert>
+
+    <update id="updateGtInteractive" parameterType="GtInteractive">
+        update gt_interactive
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="show != null  and show != ''">show = #{show},</if>
+            <if test="field != null  and field != ''">field = #{field},</if>
+            <if test="association != null  and association != ''">association = #{association},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGtInteractiveById" parameterType="String">
+        delete from gt_interactive where id = #{id}
+    </delete>
+
+    <delete id="deleteGtInteractiveByIds" parameterType="String">
+        delete from gt_interactive where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.numberone.project.gistools.twoDData.mapper.GtTwodDataMapper">
+
+    <resultMap type="GtTwodData" id="GtTwodDataResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="dataId"    column="data_id"    />
+        <result property="type"    column="type"    />
+        <result property="style"    column="style"    />
+        <result property="imgShow"    column="img_show"    />
+        <result property="billboard"    column="billboard"    />
+    </resultMap>
+
+    <sql id="selectGtTwodDataVo">
+        select id, name, data_id, type, style, img_show, billboard from gt_2d_data
+    </sql>
+
+    <select id="selectGtTwodDataList" parameterType="GtTwodData" resultMap="GtTwodDataResult">
+        <include refid="selectGtTwodDataVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="dataId != null  and dataId != ''"> and data_id = #{dataId}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="style != null  and style != ''"> and style = #{style}</if>
+            <if test="imgShow != null  and imgShow != ''"> and img_show = #{imgShow}</if>
+            <if test="billboard != null  and billboard != ''"> and billboard = #{billboard}</if>
+        </where>
+    </select>
+
+    <select id="selectGtTwodDataById" parameterType="String" resultMap="GtTwodDataResult">
+        <include refid="selectGtTwodDataVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertGtTwodData" parameterType="GtTwodData">
+        insert into gt_2d_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="dataId != null  and dataId != ''">data_id,</if>
+            <if test="type != null  and type != ''">type,</if>
+            <if test="style != null  and style != ''">style,</if>
+            <if test="imgShow != null  and imgShow != ''">img_show,</if>
+            <if test="billboard != null  and billboard != ''">billboard,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="dataId != null  and dataId != ''">#{dataId},</if>
+            <if test="type != null  and type != ''">#{type},</if>
+            <if test="style != null  and style != ''">#{style},</if>
+            <if test="imgShow != null  and imgShow != ''">#{imgShow},</if>
+            <if test="billboard != null  and billboard != ''">#{billboard},</if>
+        </trim>
+    </insert>
+
+    <update id="updateGtTwodData" parameterType="GtTwodData">
+        update gt_2d_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="dataId != null  and dataId != ''">data_id = #{dataId},</if>
+            <if test="type != null  and type != ''">type = #{type},</if>
+            <if test="style != null  and style != ''">style = #{style},</if>
+            <if test="imgShow != null  and imgShow != ''">img_show = #{imgShow},</if>
+            <if test="billboard != null  and billboard != ''">billboard = #{billboard},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGtTwodDataById" parameterType="String">
+        delete from gt_2d_data where id = #{id}
+    </delete>
+
+    <delete id="deleteGtTwodDataByIds" parameterType="String">
+        delete from gt_2d_data where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

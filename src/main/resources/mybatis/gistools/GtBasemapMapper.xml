@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.numberone.project.gistools.basemap.mapper.GtBasemapMapper">
+    
+    <resultMap type="GtBasemap" id="GtBasemapResult">
+        <result property="id"    column="id"    />
+        <result property="project"    column="project"    />
+        <result property="mapType"    column="map_type"    />
+        <result property="crs"    column="crs"    />
+        <result property="sType"    column="s_type"    />
+        <result property="url"    column="url"    />
+        <result property="param"    column="param"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="note"    column="note"    />
+    </resultMap>
+
+    <sql id="selectGtBasemapVo">
+        select id, project, map_type, crs, s_type, url, param, update_time, start_time, end_time, note, name from gt_basemap
+    </sql>
+
+    <select id="selectGtBasemapList" parameterType="GtBasemap" resultMap="GtBasemapResult">
+        <include refid="selectGtBasemapVo"/>
+        <where>
+            <if test="id != null  and id != ''"> and id like concat('%', #{id}, '%')</if>
+            <if test="note != null  and note != ''"> and note like concat('%', #{note}, '%')</if>
+            <if test="project != null  and project != ''"> and project like concat('%', #{project}, '%')</if>
+            <if test="mapType != null  and mapType != ''"> and map_type like concat('%', #{mapType}, '%')</if>
+            <if test="crs != null  and crs != ''"> and crs like concat('%', #{crs}, '%')</if>
+            <if test="sType != null  and sType != ''"> and s_type like concat('%', #{sType}, '%')</if>
+            <if test="url != null  and url != ''"> and url like concat('%', #{url}, '%')</if>
+            <if test="param != null  and param != ''"> and param like concat('%', #{param}, '%')</if>
+            <if test="updateTime != null  and updateTime != ''"> and update_time like concat('%', #{updateTime}, '%')</if>
+            <if test="startTime != null  and startTime != ''"> and start_time like concat('%', #{startTime}, '%')</if>
+            <if test="endTime != null  and endTime != ''"> and end_time like concat('%', #{endTime}, '%')</if>
+            <if test="note != null  and note != ''"> and note like concat('%', #{note}, '%')</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectGtBasemapById" parameterType="String" resultMap="GtBasemapResult">
+        <include refid="selectGtBasemapVo"/>
+        where id=#{id}
+    </select>
+        
+    <insert id="insertGtBasemap" parameterType="GtBasemap">
+        insert into gt_basemap
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="project != null ">project,</if>
+            <if test="mapType != null ">map_type,</if>
+            <if test="crs != null ">crs,</if>
+            <if test="sType != null ">s_type,</if>
+            <if test="url != null ">url,</if>
+            <if test="param != null ">param,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="startTime != null ">start_time,</if>
+            <if test="endTime != null ">end_time,</if>
+            <if test="note != null ">note,</if>
+            <if test="name != null ">name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="project != null ">#{project},</if>
+            <if test="mapType != null ">#{mapType},</if>
+            <if test="crs != null ">#{crs},</if>
+            <if test="sType != null ">#{sType},</if>
+            <if test="url != null ">#{url},</if>
+            <if test="param != null ">#{param},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="startTime != null ">#{startTime},</if>
+            <if test="endTime != null ">#{endTime},</if>
+            <if test="note != null ">#{note},</if>
+            <if test="name != null ">#{name},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGtBasemap" parameterType="GtBasemap">
+        update gt_basemap
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="project != null ">project = #{project},</if>
+            <if test="mapType != null ">map_type = #{mapType},</if>
+            <if test="crs != null ">crs = #{crs},</if>
+            <if test="sType != null ">s_type = #{sType},</if>
+            <if test="url != null ">url = #{url},</if>
+            <if test="param != null ">param = #{param},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="startTime != null ">start_time = #{startTime},</if>
+            <if test="endTime != null ">end_time = #{endTime},</if>
+            <if test="note != null ">note = #{note},</if>
+            <if test="name != null ">name = #{name},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGtBasemapById" parameterType="String">
+        delete from gt_basemap where id = #{id}
+    </delete>
+
+    <delete id="deleteGtBasemapByIds" parameterType="String">
+        delete from gt_basemap where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

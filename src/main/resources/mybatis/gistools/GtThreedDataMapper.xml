@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.numberone.project.gistools.threeDData.mapper.GtThreedDataMapper">
+
+    <resultMap type="GtThreedData" id="Gt3dDataResult">
+        <result property="id"    column="id"    />
+        <result property="shapeType"    column="shape_type"    />
+        <result property="type"    column="type"    />
+        <result property="parma"    column="parma"    />
+        <result property="name"    column="name"    />
+        <result property="source"    column="source"    />
+        <result property="height"    column="height"    />
+        <result property="xoffset"    column="xoffset"    />
+        <result property="yoffset"    column="yoffset"    />
+    </resultMap>
+
+    <sql id="selectGt3dDataVo">
+        select id, shape_type, type, parma, name, source,height,xoffset,yoffset from gt_3d_data
+    </sql>
+
+    <select id="selectGt3dDataList" parameterType="GtThreedData" resultMap="Gt3dDataResult">
+        <include refid="selectGt3dDataVo"/>
+        <where>
+            <if test="shapeType != null  and shapeType != ''"> and shape_type = #{shapeType}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="parma != null  and parma != ''"> and parma = #{parma}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="source != null  and source != ''"> and source = #{source}</if>
+        </where>
+        order by id
+    </select>
+
+    <select id="selectGt3dDataById" parameterType="String" resultMap="Gt3dDataResult">
+        <include refid="selectGt3dDataVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertGt3dData" parameterType="GtThreedData">
+        insert into gt_3d_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="shapeType != null  and shapeType != ''">shape_type,</if>
+            <if test="type != null  and type != ''">type,</if>
+            <if test="parma != null  and parma != ''">parma,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="source != null  and source != ''">source,</if>
+            <if test="height != null  and height != ''">height,</if>
+            <if test="xoffset != null  and xoffset != ''">xoffset,</if>
+            <if test="yoffset != null  and yoffset != ''">yoffset,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="shapeType != null  and shapeType != ''">#{shapeType},</if>
+            <if test="type != null  and type != ''">#{type},</if>
+            <if test="parma != null  and parma != ''">#{parma},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="source != null  and source != ''">#{source},</if>
+            <if test="height != null  and height != ''">#{height},</if>
+            <if test="xoffset != null  and xoffset != ''">#{xoffset},</if>
+            <if test="yoffset != null  and yoffset != ''">#{yoffset},</if>
+        </trim>
+    </insert>
+
+    <update id="updateGt3dData" parameterType="GtThreedData">
+        update gt_3d_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="shapeType != null  and shapeType != ''">shape_type = #{shapeType},</if>
+            <if test="type != null  and type != ''">type = #{type},</if>
+            <if test="parma != null  and parma != ''">parma = #{parma},</if>
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="source != null  and source != ''">source = #{source},</if>
+            <if test="height != null  and height != ''">height = #{height},</if>
+            <if test="xoffset != null  and xoffset != ''">xoffset = #{xoffset},</if>
+            <if test="yoffset != null  and yoffset != ''">yoffset = #{yoffset},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGt3dDataById" parameterType="String">
+        delete from gt_3d_data where id = #{id}
+    </delete>
+
+    <delete id="deleteGt3dDataByIds" parameterType="String">
+        delete from gt_3d_data where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

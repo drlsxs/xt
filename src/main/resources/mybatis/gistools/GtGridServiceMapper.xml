@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.numberone.project.gistools.gridservice.mapper.GtGridServiceMapper">
+    
+    <resultMap type="GtGridService" id="GtGridServiceResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="sdesc"    column="sdesc"    />
+        <result property="filePath"    column="file_path"    />
+        <result property="folderPath"    column="folder_path"    />
+        <result property="srid"    column="srid"    />
+        <result property="surl"    column="surl"    />
+        <result property="sparams"    column="sparams"    />
+        <result property="ftype"    column="ftype"    />
+        <result property="statu"    column="statu"    />
+        <result property="note"    column="note"    />
+    </resultMap>
+
+    <sql id="selectGtGridServiceVo">
+        select id, name, sdesc, file_path, folder_path, srid, surl, sparams, ftype, statu, note from gt_grid_service
+    </sql>
+
+    <select id="selectGtGridServiceList" parameterType="GtGridService" resultMap="GtGridServiceResult">
+        <include refid="selectGtGridServiceVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="filePath != null  and filePath != ''"> and file_path = #{filePath}</if>
+            <if test="folderPath != null  and folderPath != ''"> and folder_path = #{folderPath}</if>
+            <if test="surl != null  and surl != ''"> and surl like concat('%', #{surl}, '%')</if>
+            <if test="statu != null  and statu != ''"> and statu = #{statu}</if>
+        </where>
+    </select>
+    
+    <select id="selectGtGridServiceById" parameterType="String" resultMap="GtGridServiceResult">
+        <include refid="selectGtGridServiceVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertGtGridService" parameterType="GtGridService">
+        insert into gt_grid_service
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="sdesc != null  and sdesc != ''">sdesc,</if>
+            <if test="filePath != null  and filePath != ''">file_path,</if>
+            <if test="folderPath != null  and folderPath != ''">folder_path,</if>
+            <if test="srid != null  and srid != ''">srid,</if>
+            <if test="surl != null  and surl != ''">surl,</if>
+            <if test="sparams != null  and sparams != ''">sparams,</if>
+            <if test="ftype != null  and ftype != ''">ftype,</if>
+            <if test="statu != null  and statu != ''">statu,</if>
+            <if test="note != null  and note != ''">note,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="sdesc != null  and sdesc != ''">#{sdesc},</if>
+            <if test="filePath != null  and filePath != ''">#{filePath},</if>
+            <if test="folderPath != null  and folderPath != ''">#{folderPath},</if>
+            <if test="srid != null  and srid != ''">#{srid},</if>
+            <if test="surl != null  and surl != ''">#{surl},</if>
+            <if test="sparams != null  and sparams != ''">#{sparams},</if>
+            <if test="ftype != null  and ftype != ''">#{ftype},</if>
+            <if test="statu != null  and statu != ''">#{statu},</if>
+            <if test="note != null  and note != ''">#{note},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGtGridService" parameterType="GtGridService">
+        update gt_grid_service
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="sdesc != null  and sdesc != ''">sdesc = #{sdesc},</if>
+            <if test="filePath != null  and filePath != ''">file_path = #{filePath},</if>
+            <if test="folderPath != null  and folderPath != ''">folder_path = #{folderPath},</if>
+            <if test="srid != null  and srid != ''">srid = #{srid},</if>
+            <if test="surl != null  and surl != ''">surl = #{surl},</if>
+            <if test="sparams != null  and sparams != ''">sparams = #{sparams},</if>
+            <if test="ftype != null  and ftype != ''">ftype = #{ftype},</if>
+            <if test="statu != null  and statu != ''">statu = #{statu},</if>
+            <if test="note != null  and note != ''">note = #{note},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGtGridServiceById" parameterType="String">
+        delete from gt_grid_service where id = #{id}
+    </delete>
+
+    <delete id="deleteGtGridServiceByIds" parameterType="String">
+        delete from gt_grid_service where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

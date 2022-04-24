@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.numberone.project.gistools.twoDStyle.mapper.GtPictureMapper">
+
+    <resultMap type="GtPicture" id="GtPictureResult">
+        <result property="id"    column="id"    />
+        <result property="base"    column="base"    />
+        <result property="name"    column="name"    />
+        <result property="type"    column="type"    />
+        <result property="geometryType"    column="geometry_type"    />
+        <result property="url"    column="url"    />
+    </resultMap>
+
+    <sql id="selectGtPictureVo">
+        select id, base, name,type,geometry_type,url from gt_picture
+    </sql>
+
+    <select id="selectGtPictureList" parameterType="GtPicture" resultMap="GtPictureResult">
+        <include refid="selectGtPictureVo"/>
+        where type='1'
+        <if test="base != null  and base != ''"> and base = #{base}</if>
+        <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+    </select>
+
+    <select id="selectGtPictureById" parameterType="String" resultMap="GtPictureResult">
+        <include refid="selectGtPictureVo"/>
+        where id = #{id}
+    </select>
+    <select id="getAllName" resultType="java.lang.String">
+        select name from gt_picture
+    </select>
+    <select id="selectIconPictureList" resultType="com.numberone.project.gistools.twoDStyle.domain.GtPicture">
+        <include refid="selectGtPictureVo"/>
+        where type='2'
+        <if test="base != null  and base != ''"> and base = #{base}</if>
+        <if test="geometryType != null  and geometryType != ''"> and geometry_type = #{geometryType}</if>
+        <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+    </select>
+    <select id="selectAllIconPictureName" resultType="java.lang.String">
+        select name from gt_picture where type = '2'
+    </select>
+
+    <insert id="insertGtPicture" parameterType="GtPicture">
+        insert into gt_picture
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="base != null  and base != ''">base,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="type != null  and type != ''">type,</if>
+            <if test="geometryType != null  and geometryType != ''">geometry_type,</if>
+            <if test="url != null  and url != ''">url,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="base != null  and base != ''">#{base},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="type != null  and type != ''">#{type},</if>
+            <if test="geometryType != null  and geometryType != ''">#{geometryType},</if>
+            <if test="url != null  and url != ''">#{url},</if>
+        </trim>
+    </insert>
+
+    <update id="updateGtPicture" parameterType="GtPicture">
+        update gt_picture
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="base != null  and base != ''">base = #{base},</if>
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="geometryType != null  and geometryType != ''">geometry_type = #{geometryType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGtPictureById" parameterType="String">
+        delete from gt_picture where id = #{id}
+    </delete>
+
+    <delete id="deleteGtPictureByIds" parameterType="String">
+        delete from gt_picture where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteGtPictureByName">
+        delete from gt_picture where name = #{styleName}
+    </delete>
+
+</mapper>

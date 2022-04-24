@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('栅格服务列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>服务名称：</p>
+                                <input type="text" name="name"/>
+                            </li>
+                            <li>
+                                <p>文件路径：</p>
+                                <input type="text" name="filePath"/>
+                            </li>
+                            <li style="display:none;">
+                                <p>文件夹路径：</p>
+                                <input type="text" name="folderPath"/>
+                            </li>
+                            <li>
+                                <p>服务url：</p>
+                                <input type="text" name="surl"/>
+                            </li>
+                            <li>
+                                <p>状态：</p>
+                                <select name="statu" th:with="type=${@dict.getType('gt_grid_service')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="gistools:gridservice:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="gistools:gridservice:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="gistools:gridservice:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="gistools:gridservice:export">
+                    <i class="fa fa-download"></i> 导出
+                 </a>
+                <a class="btn btn-warning" onclick="publishSome()">
+                    <i class="fa fa-download"></i> 批量发布
+                </a>
+                <a class="btn btn-warning" onclick="registerSome()">
+                    <i class="fa fa-download"></i> 批量注册
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('gistools:gridservice:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('gistools:gridservice:remove')}]];
+        var statuDatas = [[${@dict.getType('gt_grid_service')}]];
+        var prefix = ctx + "gistools/gridservice";
+
+        function publish(id){
+			$.modal.confirm("确定发布服务吗？", function() {
+				var url = prefix + "/publish";
+				/*if($.table._option.type == table_type.bootstrapTreeTable) {
+					$.operate.get(url);
+				} else {
+					var data = { "ids": id };
+					$.operate.submit(url, "post", "json", data);
+				}*/
+				var data = { "id": id };
+				$.operate.submit(url, "post", "json", data);
+			});
+		}
+        function bulidPyramid(path){
+            $.get(prefix+"/bulidPyramid",{"path":path},function(data){
+                alert(data)
+            })
+        }
+        function unpublish(id){
+			$.modal.confirm("确定停止服务吗？", function() {
+				var url = prefix + "/unpublish";
+				/*if($.table._option.type == table_type.bootstrapTreeTable) {
+					$.operate.get(url);
+				} else {
+					var data = { "ids": id };
+					$.operate.submit(url, "post", "json", data);
+				}*/
+				var data = { "id": id };
+				$.operate.submit(url, "post", "json", data);
+			});
+		}
+        function publishSome() {
+            table.set();
+            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            if (rows.length == 0) {
+                $.modal.alertWarning("请至少选择一条记录");
+                return;
+            }
+            $.modal.confirm("确认要发布选中的数据吗?", function() {
+                var url = table.options.publishSomeUrl;
+                var data = { "ids": rows.join() };
+                $.operate.submit(url, "post", "json", data);
+            });
+        }
+        function registerSome() {
+            table.set();
+            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            if (rows.length == 0) {
+                $.modal.alertWarning("请至少选择一条记录");
+                return;
+            }
+            $.modal.confirm("确认要发布选中的数据吗?", function() {
+                var url = table.options.registerSomeUrl;
+                var data = { "ids": rows.join() };
+                $.operate.submit(url, "post", "json", data);
+            });
+        }
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                publishSomeUrl: prefix + "/publishSome",
+                registerSomeUrl:prefix + "/registerSome",
+                modalName: "栅格服务",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'id',
+                    title : 'null',
+                    visible: false
+                },
+                {
+                    field : 'name',
+                    title : '服务名称'
+                },
+                {
+                    field : 'sdesc',
+                    title : '服务描述'
+                },
+                {
+                    field : 'filePath',
+                    title : '文件路径',
+                    formatter: function (value, row, index) {
+                        if(value){
+                            var value1 = value.replace(/\\/g,"/");
+                            row.filePath=value1
+                            return value1;
+                        }else {
+                            return value
+                        }
+                    }
+                },
+                {
+                    field : 'folderPath',
+                    title : '文件夹路径'
+                },
+                {
+                    field : 'srid',
+                    title : '空间参考'
+                },
+                {
+                    field : 'statu',
+                    title : '状态',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(statuDatas, value);
+                    }
+                },
+                {
+                    field : 'note',
+                    title : '备注'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        if(row.statu=='00'){
+                        	actions.push('<a class="btn btn-info btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="publish(\'' + row.id + '\')"><i class="fa fa-play"></i>发布服务</a> ');
+                        }else{
+                        	actions.push('<a class="btn btn-warning btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="unpublish(\'' + row.id + '\')"><i class="fa fa-stop"></i>停止服务</a> ');
+                        }
+                        actions.push('<a class="btn btn-info btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="bulidPyramid(\'' + row.filePath + '\')"><i class="fa fa-remove"></i>构建金字塔</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.numberone.project.gistools.resource.mapper.ResourceMapper">
+
+    <resultMap type="Resource" id="ResourceResult">
+        <result property="id"    column="id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="layerName"    column="layer_name"    />
+        <result property="type"    column="type"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="url" column="url" />
+        <result property="endTime"    column="end_time"    />
+        <result property="note"    column="note"    />
+        <result property="project"    column="project"    />
+        <result property="url"    column="url"    />
+        <result property="geometryType"    column="geometry_Type"    />
+    </resultMap>
+
+    <sql id="selectResourceVo">
+        select id, file_name, layer_name, type, create_time,
+               update_time, end_time, note, project, url,geometry_Type from gt_resource
+    </sql>
+
+    <select id="selectResourceList" parameterType="Resource" resultMap="ResourceResult">
+        <include refid="selectResourceVo"/>
+        <where>
+            <if test="fileName != null "> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="layerName != null "> and layer_name like concat('%', #{layerName}, '%')</if>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="note != null "> and note = #{note}</if>
+            <if test="project != null "> and project = #{project}</if>
+            <if test="geometryType != null "> and geometry_Type = #{geometryType}</if>
+        </where>
+    </select>
+
+    <select id="selectResourceById" parameterType="String" resultMap="ResourceResult">
+        <include refid="selectResourceVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectUnstructuredList" resultType="com.numberone.project.gistools.resource.domain.Resource">
+        <include refid="selectResourceVo"/>
+        where type in (0,3,4,5,6,7,8,10)
+            <if test="fileName != null "> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="layerName != null "> and layer_name like concat('%', #{layerName}, '%')</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="note != null "> and note = #{note}</if>
+            <if test="project != null "> and project = #{project}</if>
+        union all select id,name file_name,null,9,create_time,update_time,end_time,note,
+                         null,null,null FROM gt_richtext
+    </select>
+    <select id="selectListByTypeList" resultType="com.numberone.project.gistools.resource.domain.Resource">
+        <include refid="selectResourceVo"/>
+        where type in
+        <foreach collection="typeList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="fileName != null "> and file_name like concat('%', #{fileName}, '%')</if>
+        <if test="typeList.contains(9)">
+            union all select id,name file_name,null,9,create_time,update_time,end_time,note,
+            null,null,null FROM gt_richtext
+        </if>
+    </select>
+    <select id="selectUrlByIds" resultType="java.lang.String">
+        select url from gt_resource where id in
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <insert id="insertResource" parameterType="Resource">
+        insert into gt_resource
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="fileName != null ">file_name,</if>
+            <if test="layerName != null ">layer_name,</if>
+            <if test="type != null ">type,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="endTime != null ">end_time,</if>
+            <if test="note != null ">note,</if>
+            <if test="project != null ">project,</if>
+            <if test="url != null ">url,</if>
+            <if test="geometryType != null ">geometry_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="fileName != null ">#{fileName},</if>
+            <if test="layerName != null ">#{layerName},</if>
+            <if test="type != null ">#{type},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="endTime != null ">#{endTime},</if>
+            <if test="note != null ">#{note},</if>
+            <if test="project != null ">#{project},</if>
+            <if test="url != null ">#{url},</if>
+            <if test="geometryType != null ">#{geometryType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateResource" parameterType="Resource">
+        update gt_resource
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileName != null ">file_name = #{fileName},</if>
+            <if test="layerName != null ">layer_name = #{layerName},</if>
+            <if test="type != null ">type = #{type},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="endTime != null ">end_time = #{endTime},</if>
+            <if test="note != null ">note = #{note},</if>
+            <if test="project != null ">project = #{project},</if>
+            <if test="url != null ">url = #{url},</if>
+            <if test="geometryType != null ">geometry_type = #{geometryType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteResourceById" parameterType="String">
+        delete from gt_resource where id = #{id}
+    </delete>
+
+    <delete id="deleteResourceByIds" parameterType="String">
+        delete from gt_resource where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

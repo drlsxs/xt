@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('wms列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>null：</p>
+                                <input type="text" name="serviceName"/>
+                            </li>
+                            <li>
+                                <p>null：</p>
+                                <input type="text" name="layerName"/>
+                            </li>
+                            <li>
+                                <p>null：</p>
+                                <select name="status" th:with="type=${@dict.getType('null')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="gistools:wms:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="gistools:wms:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="gistools:wms:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="gistools:wms:export">
+                    <i class="fa fa-download"></i> 导出
+                 </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('gistools:wms:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('gistools:wms:remove')}]];
+        var wmsIdDatas = [[${@dict.getType('null')}]];
+        var serviceNameDatas = [[${@dict.getType('null')}]];
+        var serviceUrlDatas = [[${@dict.getType('null')}]];
+        var serviceParamterDatas = [[${@dict.getType('null')}]];
+        var filterDatas = [[${@dict.getType('null')}]];
+        var layerNameDatas = [[${@dict.getType('null')}]];
+        var styleDatas = [[${@dict.getType('null')}]];
+        var remarkDatas = [[${@dict.getType('null')}]];
+        var statusDatas = [[${@dict.getType('null')}]];
+        var prefix = ctx + "gistools/wms";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "wms",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'serviceName', 
+                    title : 'null',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(serviceNameDatas, value);
+                    }
+                },
+                {
+                    field : 'serviceUrl', 
+                    title : 'null',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(serviceUrlDatas, value);
+                    }
+                },
+                {
+                    field : 'serviceParamter', 
+                    title : 'null',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(serviceParamterDatas, value);
+                    }
+                },
+                {
+                    field : 'filter', 
+                    title : 'null',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(filterDatas, value);
+                    }
+                },
+                {
+                    field : 'layerName', 
+                    title : 'null',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(layerNameDatas, value);
+                    }
+                },
+                {
+                    field : 'style', 
+                    title : 'null',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(styleDatas, value);
+                    }
+                },
+                {
+                    field : 'remark', 
+                    title : 'null',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(remarkDatas, value);
+                    }
+                },
+                {
+                    field : 'status', 
+                    title : 'null',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(statusDatas, value);
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.wmsId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.wmsId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

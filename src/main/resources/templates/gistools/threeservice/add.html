@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增三维数据服务')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-threeservice-add">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">服务名称：</label>
+                <div class="col-sm-8">
+                    <input name="name" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">服务描述：</label>
+                <div class="col-sm-8">
+                    <input name="sdesc" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">文件路径：</label>
+                <div class="col-sm-8">
+                    <input name="filePath" class="form-control" onclick="selectDeptTree()" id="filePath" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">文件夹路径：</label>
+                <div class="col-sm-8">
+                    <input name="folderPath" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">空间参考：</label>
+                <div class="col-sm-8">
+                    <input name="srid" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">状态：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('gt_grid_service')}">
+                        <input disabled="disabled" type="radio" th:id="${'statu_' + dict.dictCode}" name="statu" th:value="${dict.dictValue}" th:checked="${dict.default}">
+                        <label th:for="${'statu_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">备注：</label>
+                <div class="col-sm-8">
+                    <input name="note" class="form-control" type="text">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "gistools/threeservice"
+        $("#form-threeservice-add").validate({
+            focusCleanup: true
+        });
+		
+        /*部门管理-新增-选择父部门树*/
+		function selectDeptTree() {
+			var options = {
+				title: '文件选择',
+				width: "380",
+				url: prefix + "/seleFile",
+				callBack: doSubmit
+			};
+			$.modal.openOptions(options);
+		}
+        
+		function doSubmit(index, layero){
+			var body = layer.getChildFrame('body', index);
+   			//$("#treeId").val(body.find('#treeId').val());
+   			//$("#treeName").val(body.find('#treeName').val());
+   			$("#filePath").val(body.find('#treeId').val());
+   			layer.close(index);
+		}
+		
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-threeservice-add').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

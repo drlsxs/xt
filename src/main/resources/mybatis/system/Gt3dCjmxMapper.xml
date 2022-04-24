@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.numberone.project.system.cjmx.mapper.Gt3dCjmxMapper">
+
+    <resultMap type="Gt3dCjmx" id="Gt3dCjmxResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="mtype"    column="mtype"    />
+        <result property="url"    column="url"    />
+        <result property="crs"    column="crs"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="note"    column="note"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="shapeType"    column="shape_type"    />
+    </resultMap>
+
+    <sql id="selectGt3dCjmxVo">
+        select id, name, mtype, url, crs, start_time, end_time, note, update_time,shape_type from gt_3d_cjmx
+    </sql>
+
+    <select id="selectGt3dCjmxList" parameterType="Gt3dCjmx" resultMap="Gt3dCjmxResult">
+        <include refid="selectGt3dCjmxVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="mtype != null  and mtype != ''"> and mtype = #{mtype}</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="crs != null  and crs != ''"> and crs = #{crs}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="note != null  and note != ''"> and note = #{note}</if>
+            <if test="shapeType != null  and shapeType != ''"> and shape_type = #{shapeType}</if>
+        </where>
+    </select>
+
+    <select id="selectGt3dCjmxById" parameterType="String" resultMap="Gt3dCjmxResult">
+        <include refid="selectGt3dCjmxVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertGt3dCjmx" parameterType="Gt3dCjmx">
+        insert into gt_3d_cjmx
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="mtype != null  and mtype != ''">mtype,</if>
+            <if test="url != null  and url != ''">url,</if>
+            <if test="crs != null  and crs != ''">crs,</if>
+            <if test="startTime != null ">start_time,</if>
+            <if test="endTime != null ">end_time,</if>
+            <if test="note != null  and note != ''">note,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="shapeType != null ">shape_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="mtype != null  and mtype != ''">#{mtype},</if>
+            <if test="url != null  and url != ''">#{url},</if>
+            <if test="crs != null  and crs != ''">#{crs},</if>
+            <if test="startTime != null ">#{startTime},</if>
+            <if test="endTime != null ">#{endTime},</if>
+            <if test="note != null  and note != ''">#{note},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="shapeType != null ">#{shapeType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGt3dCjmx" parameterType="Gt3dCjmx">
+        update gt_3d_cjmx
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="mtype != null  and mtype != ''">mtype = #{mtype},</if>
+            <if test="url != null  and url != ''">url = #{url},</if>
+            <if test="crs != null  and crs != ''">crs = #{crs},</if>
+            <if test="startTime != null ">start_time = #{startTime},</if>
+            <if test="endTime != null ">end_time = #{endTime},</if>
+            <if test="note != null  and note != ''">note = #{note},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="shapeType != null ">shape_type = #{shapeType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGt3dCjmxById" parameterType="Long">
+        delete from gt_3d_cjmx where id = #{id}
+    </delete>
+
+    <delete id="deleteGt3dCjmxByIds" parameterType="String">
+        delete from gt_3d_cjmx where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
